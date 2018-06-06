@@ -28,3 +28,5 @@ awesome-python3-webapp/  <-- 根目录
 
 3、
 # pythonProject
+4、
+pip3 freeze //查看 安装的三方库版本

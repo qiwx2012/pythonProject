@@ -1,3 +1,4 @@
+import sys
 import asyncio
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -338,4 +339,34 @@ class Model(dict, metaclass=ModelMetaclass):
             logging.warning('failed to remove by primary key: affected rows: %s' % rows)
 
 
+if __name__ == "__main__":
 
+    class User(Model):
+        id = IntegerField('id', primary_key=True)
+        name = StringField('username')
+        email = StringField('email')
+        password = StringField('password')
+
+    # 创建异步事件的句柄
+    loop = asyncio.get_event_loop()
+
+
+    # 创建实例
+    @asyncio.coroutine
+    def test():
+        yield from create_pool(loop=loop, host='localhost', port=3306, user='root', password='123456', db='python_db')
+        user = User(name='Test', email='test@example.com', passwd='1234567890', image='about:blank')
+        yield from user.save()
+        r = yield from User.find('11')
+        print(r)
+        r = yield from User.findAll()
+        print(1, r)
+        r = yield from User.findAll(id='12')
+        print(2, r)
+        yield from destroy_pool()
+
+
+    loop.run_until_complete(test())
+    loop.close()
+    if loop.is_closed():
+        sys.exit(0)
